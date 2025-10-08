@@ -2,6 +2,7 @@
 
 import InstallPrompt from "@/components/InstallPrompt";
 import PushNotificationManager from "@/components/PushNotificationManager";
+import UnifiedInstallPrompt from "@/components/UnifiedInstallPrompt";
 
 // import {
 //   subscribeUser,
@@ -156,7 +157,8 @@ export default function Page() {
     <div>
       <h3>Overview Page</h3>
       <PushNotificationManager />
-      <InstallPrompt />
+      <UnifiedInstallPrompt />
+      {/* <InstallPrompt /> */}
     </div>
   );
 }

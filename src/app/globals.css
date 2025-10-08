@@ -57,14 +57,14 @@
   }
 }
 
-body {
+/* body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-open-sans); /* default font */
-}
+  font-family: var(--font-open-sans)
+} */
 
-h1,
+/* h1,
 h2,
 h3 {
-  font-family: var(--font-roboto); /* use secondary font for headings */
-}
+  font-family: var(--font-roboto); 
+} */

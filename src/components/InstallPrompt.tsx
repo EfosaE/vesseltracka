@@ -15,28 +15,34 @@ const InstallPrompt = () => {
   }, []);
 
   if (isStandalone) {
-    return null; // Don't show install button if already installed
+    return null; // Don't show install prompt if already installed
   }
 
   return (
-    <div className="my-4">
-      <h3 className="text-primary font-bold text-2xl">Install App <span className="italic text-sm">By default windows and android shows you a popup automatically</span></h3>
-      <button className="italic ">Add to Home Screen Button should show on Macos or iPhone devices</button>
-      {isIOS && (
-        <p>
-          To install this app on your iOS device, tap the share button
-          <span role="img" aria-label="share icon">
-            {" "}
-            ⎋{" "}
-          </span>
-          and then "Add to Home Screen"
-          <span role="img" aria-label="plus icon">
-            {" "}
-            ➕{" "}
-          </span>
-          .
-        </p>
-      )}
+    <div className="my-4 w-full max-w-xl">
+      <h3 className="text-primary font-bold text-2xl">
+        Install App
+        <span className="block italic text-sm font-normal mt-1 text-gray-600">
+          Windows and Android usually show an automatic install prompt. Use the button below for other platforms.
+        </span>
+      </h3>
+
+      <div className="mt-3 flex flex-col sm:flex-row sm:items-center gap-3">
+        <button
+          type="button"
+          className="bg-primary text-white py-2 px-4 rounded-md w-full sm:w-auto text-left"
+          aria-label="Prompt to add app to home screen"
+        >
+          Add to Home Screen
+        </button>
+
+        {isIOS && (
+          <p className="text-sm text-gray-700">
+            On iOS: tap the share icon then choose "Add to Home Screen" to install
+            <span aria-hidden> ➕</span>
+          </p>
+        )}
+      </div>
     </div>
   );
 };

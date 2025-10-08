@@ -93,23 +93,30 @@ export default function PushNotificationManager() {
   }
 
   if (!isSupported) {
-    return <p>Push notifications are not supported in this browser.</p>;
+    return (
+      <div className="my-4">
+        <h3 className="text-primary font-bold text-2xl">Push Notifications</h3>
+        <p className="text-sm text-gray-600 mt-2">Push notifications are not supported in this browser.</p>
+      </div>
+    );
   }
 
   return (
     <div className="my-4">
       <h3 className="text-primary font-bold text-2xl">Push Notifications</h3>
       {subscription ? (
-        <div className="flex flex-col gap-4">
-          <p className="text-green-400 ">
+        <div className="flex flex-col gap-3 mt-3">
+          <p className="text-green-600 text-sm">
             You are subscribed to push notifications.
           </p>
           <button
             onClick={unsubscribeFromPush}
-            className="bg-red-400 text-white py-2 px-4 rounded-md">
+            className="bg-red-500 text-white py-2 px-4 rounded-md w-full sm:w-auto">
             Unsubscribe
           </button>
+          <label className="sr-only" htmlFor="test-message">Notification message</label>
           <input
+            id="test-message"
             type="text"
             placeholder="Enter notification message to test"
             className="border border-gray-300 p-2 rounded-md w-full"
@@ -118,18 +125,19 @@ export default function PushNotificationManager() {
           />
           <button
             onClick={sendTestNotification}
-            className="bg-primary text-white py-2 px-4 rounded-md">
+            disabled={message.trim().length === 0}
+            className="bg-primary disabled:opacity-50 text-white py-2 px-4 rounded-md w-full sm:w-auto">
             Send Test
           </button>
         </div>
       ) : (
-        <div className="flex flex-col gap-4">
-          <p className="text-secondary italic">
+        <div className="flex flex-col gap-3 mt-3">
+          <p className="text-gray-600 italic text-sm">
             You are not subscribed to push notifications.
           </p>
           <button
             onClick={subscribeToPush}
-            className="bg-primary text-white py-2 px-4 rounded-md w-fit">
+            className="bg-primary text-white py-2 px-4 rounded-md w-full sm:w-auto">
             Subscribe
           </button>
         </div>

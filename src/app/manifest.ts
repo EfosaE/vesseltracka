@@ -3,7 +3,7 @@ import type { MetadataRoute } from 'next'
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'VesselTracka',
-    short_name: 'VT',
+    short_name: 'VesselTracka',
     description: 'A Progressive Web App for follow-up management',
     start_url: '/',
     display: 'standalone',

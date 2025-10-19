@@ -1,5 +1,6 @@
 "use client";
 
+import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 
 function urlBase64ToUint8Array(base64String: string) {
@@ -115,6 +116,7 @@ export default function PushNotificationManager() {
             Unsubscribe
           </button>
           <label className="sr-only" htmlFor="test-message">Notification message</label>
+          {/* <Input type="email" placeholder="Email" /> */}
           <input
             id="test-message"
             type="text"

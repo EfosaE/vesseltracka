@@ -36,7 +36,7 @@ export default function NavLink({ href, exact, className = "", onClick, children
     }
   }
 
-  const activeCls = isActive ? "bg-white/10 font-semibold" : "hover:bg-primary-light";
+  const activeCls = isActive ? "bg-[color:var(--sidebar-primary)]/10 font-semibold" : "hover:bg-[color:var(--sidebar-primary)]";
 
   return (
     <Link

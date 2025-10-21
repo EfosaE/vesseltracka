@@ -14,11 +14,11 @@ import {
   X,
 } from "lucide-react";
 import { useAppContext } from "@/context/AppContext";
+import { Button } from "@/components/ui/button";
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const { isSidebarOpen, toggleSidebar } = useAppContext();
-
 
   return (
     <aside
@@ -28,41 +28,48 @@ const Sidebar = () => {
         md:translate-x-0 bg-[color:var(--sidebar)] text-[color:var(--sidebar-foreground)]`}>
       {/* Header / Toggle */}
       <div className="flex items-center justify-between mb-8">
-  {!collapsed && <h2 className="text-2xl font-bold">VesselTracka</h2>}
+        {!collapsed && <h2 className="text-2xl font-bold">VesselTracka</h2>}
         <div className="flex items-center gap-2">
           {/* Mobile close button */}
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => isSidebarOpen && toggleSidebar()}
             aria-label="Close sidebar"
-            className="md:hidden p-1 rounded hover:bg-[color:var(--sidebar-primary)]">
+            className="md:hidden p-1">
             <X size={18} />
-          </button>
+          </Button>
 
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setCollapsed(!collapsed)}
-            className="p-1 rounded hover:bg-sidebar-primary">
+            className="p-1">
             {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Nav Links */}
       <nav className="flex flex-col space-y-2">
-        {([
+        {[
           { href: "/", label: "Overview", icon: <LayoutDashboard size={20} /> },
           { href: "/vessels", label: "Vessels", icon: <Ship size={20} /> },
           { href: "/outreach", label: "Outreach", icon: <Ship size={20} /> },
           { href: "/reports", label: "Reports", icon: <BarChart3 size={20} /> },
-          { href: "/settings", label: "Settings", icon: <Settings size={20} /> },
-        ]).map((item) => (
+          {
+            href: "/settings",
+            label: "Settings",
+            icon: <Settings size={20} />,
+          },
+        ].map((item) => (
           <NavLink
             key={item.href}
             href={item.href}
             className="flex items-center gap-3 px-3 py-2 rounded transition"
             onClick={() => {
               if (isSidebarOpen) toggleSidebar();
-            }}
-          >
+            }}>
             {item.icon}
             {!collapsed && <span>{item.label}</span>}
           </NavLink>
@@ -71,11 +78,11 @@ const Sidebar = () => {
 
       {/* Footer (Logout) */}
       <div className="mt-auto">
-        <Link
-          href="/logout"
-          className="flex items-center gap-3 px-3 py-2 rounded hover:bg-red-700 transition">
-          <LogOut size={20} />
-          {!collapsed && <span>Logout</span>}
+        <Link href="/logout" className="block">
+          <Button variant="ghost" className="w-full flex items-center gap-3 px-3 py-2 hover:bg-red-700 transition">
+            <LogOut size={20} />
+            {!collapsed && <span>Logout</span>}
+          </Button>
         </Link>
       </div>
     </aside>

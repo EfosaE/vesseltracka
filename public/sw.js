@@ -1,4 +1,9 @@
-const CACHE_NAME = "VESSEL_TRACKA_V1";
+importScripts("/version.js");
+
+const APP_VERSION = self.APP_VERSION || "dev";
+const CACHE_VERSION = "v1.1";
+const CACHE_NAME = `VESSEL_TRACKA_${APP_VERSION}_${CACHE_VERSION}`;
+const BACKEND_URL = "https://www.omdbapi.com";
 
 // OFFLINE SUPPORT
 async function cacheCoreAssets() {
@@ -29,22 +34,17 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-
-
 // CACHING STRATEGY
 async function dynamicCaching(request) {
-  const cache = await caches.open(CACHE_NAME);
-
+  console.log("Dynamic cache triggered", request);
   try {
     const response = await fetch(request);
-    const responseClone = response.clone();
-    await cache.put(request, responseClone);
+    const cache = await caches.open(CACHE_NAME);
+    cache.put(request, response.clone());
     return response;
-  } catch (error) {
-    console.error("Dynamic caching failed:", error);
+  } catch {
     return caches.match(request);
   }
-  
 }
 
 async function cacheFirstStrategy(request) {
@@ -68,20 +68,41 @@ async function cacheFirstStrategy(request) {
 
 self.addEventListener("fetch", (event) => {
   const { request } = event;
-  if (event.request.mode === "navigate") {
+  const url = new URL(request.url);
+
+  if (url.origin === BACKEND_URL) {
+    // USES THE INDEXED DB; NOT YET IMPLEMENTED THO
+    event.respondWith(networkFirstStrategy(request));
+  } else if (event.request.mode === "navigate") {
     event.respondWith(cacheFirstStrategy(request));
   } else {
     event.respondWith(dynamicCaching(request));
   }
 });
 
+// self.addEventListener("fetch", (event) => {
+//   const { request } = event;
+//   const url = new URL(request.url);
+//   console.log(url)
+//   console.log(request.mode)
+
+//   if (request.mode === "navigate") {
+//     // For navigation (HTML pages)
+//     event.respondWith(cacheFirstStrategy(request));
+//   } else if (url.pathname.startsWith("/api/")) {
+//     // Only cache API responses dynamically
+//     event.respondWith(networkFirstStrategy(request));
+//   } else {
+//     // Let other requests just go to network (don’t cache)
+//     return;
+//   }
+// });
 
 // // Fetch event listener for all pages/resources
 // self.addEventListener("fetch", (event) => {
 //   // console.log("Fetch event for ", event.request);
 //   event.respondWith(fetch(event.request));
 // });
-
 
 // NEXT JS PUSH NOTIFICATIONS
 self.addEventListener("push", function (event) {
@@ -101,14 +122,10 @@ self.addEventListener("push", function (event) {
   }
 });
 
-
-
 self.addEventListener("notificationclick", function (event) {
   console.log("Notification click received.");
   event.notification.close();
   event.waitUntil(clients.openWindow("/")); // Opens root of current domain, you can also send the user to a specific URL just pass the data via the event
 });
-
-
 
 // INDEXED DB (FOR FUTURE USE)

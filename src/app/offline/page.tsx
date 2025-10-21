@@ -9,13 +9,13 @@ export default function OfflinePage() {
       <div className="bg-white p-8 rounded-2xl shadow-md max-w-md">
         <WifiOff className="w-12 h-12 text-gray-500 mx-auto mb-4" />
         <h1 className="text-2xl font-semibold text-gray-800 mb-2">
-          You’re Offline
+          It seems you’ve lost your internet connection.
         </h1>
-        <p className="text-gray-600 mb-6">
-          It seems you’ve lost your internet connection. Don’t worry — you can
-          still browse saved pages or try again later.
-        </p>
 
+        <p>
+          The current page isn't available offline. Please try again when when
+          you're back online.
+        </p>
         <div className="flex justify-center gap-3">
           <button
             onClick={() => window.location.reload()}

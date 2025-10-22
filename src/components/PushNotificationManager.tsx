@@ -1,5 +1,10 @@
 "use client";
 
+import {
+  sendNotification,
+  subscribeUser,
+  unsubscribeUser,
+} from "@/app/actions";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 
@@ -24,6 +29,10 @@ export default function PushNotificationManager() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
+    console.log(subscription);
+  }, [subscription]);
+
+  useEffect(() => {
     if ("serviceWorker" in navigator && "PushManager" in window) {
       setIsSupported(true);
       registerServiceWorker();
@@ -38,6 +47,16 @@ export default function PushNotificationManager() {
       });
       const sub = await registration.pushManager.getSubscription();
       setSubscription(sub);
+      // ensure server knows about the subscription (sync), we would use a DB connection soon
+      if (sub) {
+        const serialized = JSON.parse(JSON.stringify(sub)); // safe to serialize
+        try {
+          await subscribeUser(serialized); // server action
+          console.log("Server subscription synced");
+        } catch (err) {
+          console.error("Failed to sync subscription to server", err);
+        }
+      }
     } catch (err) {
       console.error("SW registration failed:", err);
     }
@@ -53,13 +72,17 @@ export default function PushNotificationManager() {
         ),
       });
       setSubscription(sub);
+      console.log("Subscription Object", sub);
+      // Using server actions
+      const serializedSub = JSON.parse(JSON.stringify(sub));
+      await subscribeUser(serializedSub);
 
       // Send subscription to server API
-      await fetch("/api/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(sub.toJSON()),
-      });
+      // await fetch("/api/subscribe", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(sub.toJSON()),
+      // });
     } catch (err) {
       console.error("Subscribe failed:", err);
     }
@@ -69,10 +92,11 @@ export default function PushNotificationManager() {
     try {
       await subscription?.unsubscribe();
       setSubscription(null);
+      await unsubscribeUser();
 
-      await fetch("/api/unsubscribe", {
-        method: "POST",
-      });
+      // await fetch("/api/unsubscribe", {
+      //   method: "POST",
+      // });
     } catch (err) {
       console.error("Unsubscribe failed:", err);
     }
@@ -82,11 +106,12 @@ export default function PushNotificationManager() {
     if (!subscription) return;
 
     try {
-      await fetch("/api/notify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message }),
-      });
+      await sendNotification(message);
+      // await fetch("/api/notify", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({ message }),
+      // });
       setMessage("");
     } catch (err) {
       console.error("Send notification failed:", err);
@@ -97,7 +122,9 @@ export default function PushNotificationManager() {
     return (
       <div className="my-4">
         <h3 className="text-primary font-bold text-2xl">Push Notifications</h3>
-        <p className="text-sm text-gray-600 mt-2">Push notifications are not supported in this browser.</p>
+        <p className="text-sm text-gray-600 mt-2">
+          Push notifications are not supported in this browser.
+        </p>
       </div>
     );
   }
@@ -115,16 +142,17 @@ export default function PushNotificationManager() {
             className="bg-red-500 text-white py-2 px-4 rounded-md w-full sm:w-auto">
             Unsubscribe
           </button>
-          <label className="sr-only" htmlFor="test-message">Notification message</label>
-          {/* <Input type="email" placeholder="Email" /> */}
-          <input
+          <label className="sr-only" htmlFor="test-message">
+            Notification message
+          </label>
+          <Input
             id="test-message"
             type="text"
             placeholder="Enter notification message to test"
-            className="border border-gray-300 p-2 rounded-md w-full"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
+
           <button
             onClick={sendTestNotification}
             disabled={message.trim().length === 0}

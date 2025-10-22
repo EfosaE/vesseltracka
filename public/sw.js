@@ -35,17 +35,17 @@ self.addEventListener("activate", (event) => {
 });
 
 // CACHING STRATEGY
-async function dynamicCaching(request) {
-  console.log("Dynamic cache triggered", request);
-  try {
-    const response = await fetch(request);
-    const cache = await caches.open(CACHE_NAME);
-    cache.put(request, response.clone());
-    return response;
-  } catch {
-    return caches.match(request);
-  }
-}
+// async function dynamicCaching(request) {
+//   // console.log("Dynamic cache triggered", request);
+//   try {
+//     const response = await fetch(request);
+//     const cache = await caches.open(CACHE_NAME);
+//     cache.put(request, response.clone());
+//     return response;
+//   } catch {
+//     return caches.match(request);
+//   }
+// }
 
 async function cacheFirstStrategy(request) {
   try {
@@ -76,7 +76,8 @@ self.addEventListener("fetch", (event) => {
   } else if (event.request.mode === "navigate") {
     event.respondWith(cacheFirstStrategy(request));
   } else {
-    event.respondWith(dynamicCaching(request));
+    // event.respondWith(dynamicCaching(request));
+    event.respondWith(fetch(request));
   }
 });
 
@@ -101,7 +102,7 @@ self.addEventListener("fetch", (event) => {
 // // Fetch event listener for all pages/resources
 // self.addEventListener("fetch", (event) => {
 //   // console.log("Fetch event for ", event.request);
-//   event.respondWith(fetch(event.request));
+// event.respondWith(fetch(event.request));
 // });
 
 // NEXT JS PUSH NOTIFICATIONS

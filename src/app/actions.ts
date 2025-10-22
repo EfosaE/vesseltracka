@@ -12,22 +12,26 @@ webpush.setVapidDetails(
 let subscription: webpush.PushSubscription | null = null;
 
 // Helper to normalize browser subscription to web-push format
-function normalizeSubscription(sub: PushSubscription): webpush.PushSubscription {
+
+function normalizeSubscription(sub: any): webpush.PushSubscription {
   return {
     endpoint: sub.endpoint,
     keys: {
-      p256dh: sub.toJSON().keys?.p256dh || "",
-      auth: sub.toJSON().keys?.auth || "",
+      p256dh: sub.keys?.p256dh || "",
+      auth: sub.keys?.auth || "",
     },
   };
 }
-
 export async function subscribeUser(sub: PushSubscription) {
+  // In a production environment, you would want to store the subscription in a database
+  // For example: await db.subscriptions.create({ data: sub })
   subscription = normalizeSubscription(sub);
   return { success: true };
 }
 
 export async function unsubscribeUser() {
+  // In a production environment, you would want to remove the subscription from the database
+  // For example: await db.subscriptions.delete({ where: { ... } })
   subscription = null;
   return { success: true };
 }
